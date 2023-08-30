@@ -1,0 +1,19 @@
+program = stmt*
+
+expr = call | number | string | object | list | quote
+stmt = def | symbol
+
+call = identifier expr
+
+def = 'def' expr
+symbol = 'symbol' identifier
+
+pair = identifier '=' expr
+object = '<' pair+ '>'
+
+list = '[' expr* ']'
+quote = '(' expr* ')'
+
+identifier = ? {XID_Start}{XID_Continue}* ?
+number = ? \d+ ?
+string = ? ".*?" ?

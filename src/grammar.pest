@@ -1,1 +1,29 @@
+WHITESPACE = _{ WHITE_SPACE }
+COMMENT = _{ "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+expr = { identifier | call | number | string | object | list | quote }
+stmt = { def | symbol }
+
+call = { identifier ~ expr }
+
+def = { "def" ~ identifier ~ expr }
+symbol = { "symbol" ~ identifier }
+
+list = { "[" ~ expr ~ "]" }
+quote = { "(" ~ expr ~ ")" }
+
+pair = { identifier ~ "=" ~ expr }
+object = { "<" ~ pair* ~ ">" }
+
 identifier = @{ XID_START ~ XID_CONTINUE* }
+number = @{ ASCII_DIGIT+ }
+
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
+
+program = { SOI ~ stmt* ~ EOI }
