@@ -1,3 +1,6 @@
-fn main() {
-    println!("Hello, world!");
-}
+mod parser;
+
+use parser::Rule;
+use pest::Parser;
+
+fn main() {}
