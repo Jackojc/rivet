@@ -1,1 +1,28 @@
+WHITESPACE = _{ " " | "\t" | "\n" }
+COMMENT = _{ "#" ~ (!NEWLINE ~ ANY)* }
+
+lit = { number | string }
+terminal = { object | lit }
+
+expr = { ( identifier | expr_p ) ~ expr_p }
+expr_p = { terminal | expr | "(" ~ expr_p ~ ")" }
+
+def = { "def" ~ identifier{2} ~ expr }
+symbol = { "symbol" ~ identifier }
+
+statement = { def | symbol | expr }
+program = { statement* }
+
+pair = { (lit ~ "=")? ~ expr }
+object = {
+	"<" ~ ">" | 
+	"<" ~ pair ~ ("," ~ pair)* ~ "," ~ ">"
+}
+
 identifier = @{ XID_START ~ XID_CONTINUE* }
+number = @{ ASCII_DIGIT+ }
+
+string = @{ "\"" ~ inner ~ "\"" }
+inner = @{ (!("\"" | "\\" | "\u{0000}" | "\u{001F}") ~ ANY)* ~ (escape ~ inner)? }
+escape  = @{ "\\" ~ ("b" | "t" | "n" | "f" | "r" | "\"" | "\\" | unicode | NEWLINE)? }
+unicode = @{ "u" ~ ASCII_HEX_DIGIT{4} | "U" ~ ASCII_HEX_DIGIT{8} }
