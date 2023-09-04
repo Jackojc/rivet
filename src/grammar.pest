@@ -4,14 +4,16 @@ COMMENT = _{ "#" ~ (!NEWLINE ~ ANY)* }
 lit = { number | string }
 terminal = { object | lit }
 
-expr = { ( identifier | expr_p ) ~ expr_p }
-expr_p = { terminal | expr | "(" ~ expr_p ~ ")" }
-
-def = { "def" ~ identifier{2} ~ expr }
+let = { "let" ~ identifier ~ expr }
 symbol = { "symbol" ~ identifier }
 
-statement = { def | symbol | expr }
+statement = { let | symbol | expr }
 program = { statement* }
+
+lambda = { "\\" ~ identifier ~ expr }
+
+expr = { lambda | identifier | terminal | operator }
+operator = { expr ~ "<-" ~ expr }
 
 pair = { (lit ~ "=")? ~ expr }
 object = {
